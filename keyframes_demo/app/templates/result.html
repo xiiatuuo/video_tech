@@ -1,0 +1,15 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+
+{% for path in images_path %}
+<table>
+<tr valign="top">
+        <td><img src="{{path.entropy}}"></td>
+        <td><img src="{{path.gray_pixel}}"></td>
+</tr>
+</table>
+{% endfor %}
+
+{% endblock %}
