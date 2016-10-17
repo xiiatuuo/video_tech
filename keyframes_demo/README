@@ -1,5 +1,8 @@
 
-
+1.修改uwsgi_config.ini的chdir
 /usr/bin/uwsgi -d logs/uswgi.log uwsgi_config.ini
 
+2. 修改nginx.conf server_name\UWSGI_CHDIR
 nginx -c $YOUR_PATH
+
+
