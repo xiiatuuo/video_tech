@@ -1,0 +1,5 @@
+
+
+/usr/bin/uwsgi -d logs/uswgi.log uwsgi_config.ini
+
+nginx -c $YOUR_PATH
