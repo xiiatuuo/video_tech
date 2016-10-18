@@ -5,4 +5,8 @@
 2. 修改nginx.conf server_name\UWSGI_CHDIR
 nginx -c $YOUR_PATH
 
+3. reload
+uwsgi --reload uwsgi_pid
+
+
 
