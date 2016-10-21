@@ -41,7 +41,11 @@ def copy():
 
         cd = CopyDetector()
         result_flag = cd.md5_check(kf_a.video, kf_b.video)
-        print result_flag
+        if not result_flag:
+            print "MD5 NOT WORK"
+            gray_pixel_images_path, info = kf_a.gray_pixel_based()
+            gray_pixel_images_path, info = kf_b.gray_pixel_based()
+            result_flag = cd.sift_check(kf_a.absolute_keyframs_list, kf_b.absolute_keyframs_list)
         if result_flag:
             detect_result = "SAME"
         else:
