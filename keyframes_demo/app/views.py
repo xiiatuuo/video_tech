@@ -1,6 +1,7 @@
 from flask import render_template, flash, redirect
 from app import app
 from .forms import SubmitForm
+from .copy_form import CopyForm
 import time
 from hashlib import md5
 import os
@@ -12,6 +13,7 @@ from entropy_keyframe import obtain_all_entropy_list
 from entropy_keyframe import obtain_duration_entropy_list
 from config import basedir
 from keyframe import KeyFrame
+from copy_detector import CopyDetector
 
 
 
@@ -20,6 +22,40 @@ from keyframe import KeyFrame
 @app.route('/index')
 def index():
     return "Hello world"
+
+@app.route('/copy', methods=['GET', 'POST'])
+def copy():
+    form = CopyForm()
+    if form.validate_on_submit():
+        flash('sub requested for  url a =' + str(form.url_a.data) + '  url b = ' + str(form.url_b.data))
+        kf_a = KeyFrame(form.url_a.data)
+        download_flag , info = kf_a.download_video()
+        if not download_flag:
+            return render_template('copy.html', title='Submit', form=form, error=info)
+
+        kf_b = KeyFrame(form.url_b.data)
+        download_flag , info = kf_b.download_video()
+        if not download_flag:
+            return render_template('copy.html', title='Submit', form=form, error=info)
+
+
+        cd = CopyDetector()
+        result_flag = cd.md5_check(kf_a.video, kf_b.video)
+        if not result_flag:
+            print "MD5 NOT WORK"
+            gray_pixel_images_path, info = kf_a.gray_pixel_based()
+            gray_pixel_images_path, info = kf_b.gray_pixel_based()
+            result_flag = cd.sift_check(kf_a.absolute_keyframs_list, kf_b.absolute_keyframs_list)
+        if result_flag:
+            detect_result = "SAME"
+        else:
+            detect_result = "DIFF"
+        print detect_result
+        return render_template('copy_result.html', title='Result', result=detect_result)
+
+    return render_template('copy.html', title='Detect', form=form, error="")
+
+
 
 def packge_result(a, b):
     n = max(len(a), len(b))

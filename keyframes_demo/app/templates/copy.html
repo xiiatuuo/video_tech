@@ -1,0 +1,18 @@
+<!-- extend from base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Copy Detection</h1>
+<form action="" method="post" name="copy">
+    {{form.hidden_tag()}}
+    <p>
+        Please enter your Url:<br>
+        A:{{form.url_a(size=256)}}<br>
+        B:{{form.url_b(size=256)}}<br>
+		{% if error %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endif %}
+    </p>
+    <p><input type="submit" value="detect"></p>
+</form>
+{% endblock %}

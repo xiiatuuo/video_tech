@@ -21,6 +21,7 @@ class KeyFrame(object):
         self.image_path = os.path.join(basedir, 'static', self.indentity)
         self.video = os.path.join(self.image_path, self.indentity + ".mp4")
         self.video_name = self.indentity + ".mp4"
+        self.absolute_keyframs_list = []
 
     def download_video(self):
         if not os.path.exists(self.image_path):
@@ -56,6 +57,7 @@ class KeyFrame(object):
             image_list =  obtain_local_frames(self.image_path)
             keyframs_list = obtain_duration_entropy_list(image_list, 12)
             print keyframs_list
+            self.absolute_keyframs_list = keyframs_list[:10]
             for frame in keyframs_list[:10]:
                 absolute_path  = frame
                 print absolute_path
@@ -89,6 +91,7 @@ class KeyFrame(object):
         try:
             extractKeyFrames(self.video, self.image_path)
             keyframs_list = self.sorted_as_number(self.image_path, "png")
+            self.absolute_keyframs_list = keyframs_list[:10]
             for frame in keyframs_list[:10]:
                 absolute_path  = frame
                 print absolute_path
