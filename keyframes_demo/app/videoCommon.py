@@ -59,4 +59,23 @@ def saveFramesAsPngs(cap, frame_no_list, out_path, withScale = False):
     except Exception, e:
         print "saveFrameAsPng error: %s" % str(e)
 
+if __name__ == "__main__":
+    videofile = sys.argv[1]
+
+    cap = cv2.VideoCapture(videofile)       # open video file
+    if not cap.isOpened():
+        raise Exception("open %s fail!" % videofile)
+
+    showVideoInfo(cap)
+
+    out_path = sys.argv[2]
+    saveFramesAsPngs(cap, [34,43,64], out_path)
+    #while True:
+    #    succ, frame = cap.read()
+    #    if not succ:
+    #        break
+
+    #    frame_no = int(cap.get(cv.CV_CAP_PROP_POS_FRAMES) - 1)
+    #    print frame_no, frame.shape
+
 

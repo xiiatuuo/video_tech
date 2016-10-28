@@ -11,6 +11,7 @@ from entropy_keyframe  import obtain_local_frames
 from entropy_keyframe import obtain_all_entropy_list
 from entropy_keyframe import obtain_duration_entropy_list
 from keyFrame_gray_pixel import  extractKeyFrames
+from keyframeExtraction import KFE
 from config import basedir
 
 class KeyFrame(object):
@@ -86,24 +87,55 @@ class KeyFrame(object):
         return sorted_image_list
 
 
-    def gray_pixel_based(self):
-        key_images_path = []
-        try:
-            extractKeyFrames(self.video, self.image_path)
-            keyframs_list = self.sorted_as_number(self.image_path, "png")
-            self.absolute_keyframs_list = keyframs_list[:10]
-            for frame in keyframs_list[:10]:
-                absolute_path  = frame
-                print absolute_path
-                start = absolute_path.find("static")
-                relative_path = absolute_path[start-1:]
-                key_images_path.append(relative_path)
-            print key_images_path
-        except Exception,data:
-            print data
-            return None, "compute gray pixel error"
+    #def gray_pixel_based(self):
+    #    key_images_path = []
+    #    try:
+    #        extractKeyFrames(self.video, self.image_path)
+    #        keyframs_list = self.sorted_as_number(self.image_path, "png")
+    #        self.absolute_keyframs_list = keyframs_list[:10]
+    #        for frame in keyframs_list[:10]:
+    #            absolute_path  = frame
+    #            print absolute_path
+    #            start = absolute_path.find("static")
+    #            relative_path = absolute_path[start-1:]
+    #            key_images_path.append(relative_path)
+    #        print key_images_path
+    #    except Exception,data:
+    #        print data
+    #        return None, "compute gray pixel error"
 
         return key_images_path,"Succ"
+
+
+    def method1(self):
+        try:
+            cap = cv2.VideoCapture(self.video)       # open video file
+            if not cap.isOpened():
+                raise Exception("open %s fail!" % videofile)
+
+            kfe = KFE(cap)
+            keyframe_no_list = kfe.usePixelGrayValue()
+
+            videoCommon.saveFramesAsPngs(cap, keyframe_no_list, outpath)
+
+        except Exception, data:
+            print data
+
+
+    def method2(self):
+        try:
+            cap = cv2.VideoCapture(self.video)       # open video file
+            if not cap.isOpened():
+                raise Exception("open %s fail!" % videofile)
+
+            kfe = KFE(cap)
+            keyframe_no_list = kfe.useBlockGrayHist()
+
+            videoCommon.saveFramesAsPngs(cap, keyframe_no_list, outpath)
+
+        except Exception, data:
+            print data
+
 
 
 if __name__ == "__main__":
