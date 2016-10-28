@@ -6,6 +6,39 @@ import cv2
 from cv2 import cv
 import numpy as np
 
+def getExtremeMaxValue(value_list):
+    try:
+        value_list = np.array(value_list)
+        cv2.normalize(value_list, value_list, 0, 100, cv2.NORM_MINMAX)
+
+        local_maxinum_list = []
+
+        index = 0
+        pre_value = value_list[0]
+        upward_trend = True
+        for value in value_list:
+            if upward_trend:
+                if value < pre_value:       # local maximum
+                    local_maxinum_list.append((index-1, pre_value))
+                    trend_up_flag = False
+            else:
+                if value >= pre_value:      # local minimum
+                    trend_up_flag = True
+
+            pre_value = value
+            index += 1
+
+        sorted_local_maxinum_list = sorted(local_maxinum_list, key = lambda ele:ele[1], reverse = True)
+        value_index_list = [each[0] for each in sorted_local_maxinum_list[:9]]
+        value_index_list = sorted(value_index_list)
+
+        return value_index_list
+    except Exception, e:
+        print "getExtremeMaxValue error: %s" % str(e)
+        return None
+
+
+
 def select_centroid_element(cluster, center):
     try:
         result = cluster[0]
@@ -45,7 +78,7 @@ def selectKeyframesByKMeans(frame_list, cluster_number):
         for i in xrange(cluster_number):
             cluster = frame_list_np[labels==i]
             center = centers[i][0]
-            print i, cluster
+            #print i, cluster
             selected_frame = select_centroid_element(cluster, center)
             selected_frames.append(selected_frame)          
   
