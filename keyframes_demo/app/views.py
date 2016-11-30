@@ -2,6 +2,7 @@ from flask import render_template, flash, redirect
 from app import app
 from .forms import SubmitForm
 from .copy_form import CopyForm
+from .porn_form import PornForm
 import time
 from hashlib import md5
 import os
@@ -14,6 +15,7 @@ from entropy_keyframe import obtain_duration_entropy_list
 from config import basedir
 from keyframe import KeyFrame
 from copy_detector import CopyDetector
+from porn_image import PornImage
 
 
 
@@ -22,6 +24,27 @@ from copy_detector import CopyDetector
 @app.route('/index')
 def index():
     return "Hello world"
+
+@app.route('/porn', methods=['GET', 'POST'])
+def porn():
+    form = PornForm()
+    if form.validate_on_submit():
+        flash('sub requested for image url =' + str(form.url.data) )
+        im = PornImage(form.url.data)
+        download_flag , info = im.download_image()
+        if not download_flag:
+            return render_template('porn.html', title='Submit', form=form, error=info)
+
+        result_flag = im.is_porn()
+        if result_flag:
+            detect_result = "YES , It's porn, Got " + str(round(im.score,2))
+        else:
+            detect_result = "Nope,  Got " + str(round(im.score,2))
+        print detect_result
+        return render_template('porn_result.html', title='Result', result=detect_result)
+
+    return render_template('porn.html', title='Detect', form=form, error="")
+
 
 @app.route('/copy', methods=['GET', 'POST'])
 def copy():
