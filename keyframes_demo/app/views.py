@@ -3,6 +3,7 @@ from app import app
 from .forms import SubmitForm
 from .copy_form import CopyForm
 from .porn_form import PornForm
+from .image_classification_form import ImageClassificationForm
 import time
 from hashlib import md5
 import os
@@ -16,7 +17,7 @@ from config import basedir
 from keyframe import KeyFrame
 from copy_detector import CopyDetector
 from porn_image import PornImage
-
+from image import Image
 
 
 
@@ -45,6 +46,21 @@ def porn():
 
     return render_template('porn.html', title='Detect', form=form, error="")
 
+@app.route('/classify', methods=['GET', 'POST'])
+def classify():
+    form = ImageClassificationForm()
+    if form.validate_on_submit():
+        flash('sub requested for image url =' + str(form.url.data) )
+        im = Image(form.url.data)
+        download_flag , info = im.download_image()
+        if not download_flag:
+            return render_template('image_classification.html', title='Submit', form=form, error=info)
+
+        detect_result = im.classify()
+        print detect_result
+        return render_template('image_classification_result.html', title='Result', result=detect_result)
+
+    return render_template('image_classification.html', title='Detect', form=form, error="")
 
 @app.route('/copy', methods=['GET', 'POST'])
 def copy():
