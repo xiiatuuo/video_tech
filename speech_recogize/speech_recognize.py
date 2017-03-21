@@ -6,12 +6,14 @@ import json
 from baiduapi import recognize
 from end_point_split import split_wavs
 from utility import req_bin_server
+from config import HOST
+from config import PORT
 
 
 
 def analysis(text):
-    host = "10.85.9.159"
-    port = 12346
+    host = HOST
+    port = PORT 
     req_dict = {}
     req_dict["cmd"] = "text_analyze"
     req_dict["body"] = {}
